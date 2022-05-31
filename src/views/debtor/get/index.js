@@ -19,6 +19,7 @@ import {
     ListItemAvatar,
     ListItemText,
     ListSubheader,
+    Skeleton,
     SpeedDial,
     SpeedDialAction,
     Typography
@@ -35,14 +36,14 @@ import EditDebtorDialog from "./edit";
 import DeleteDebtorDialog from "./delete";
 import {getAmountOfDebt, getLastDebtDate, getPaidDebtsCount, getUnPaidDebtsCount} from "./utils";
 
-const FlexDiv = styled('div')(({theme}) => ({
+const FlexDiv = styled('div')(() => ({
     display: "flex",
     justifyContent: "space-between",
     alignItems: "space-between",
     marginTop: 25,
 }));
 
-const FlexDivItem = styled('div')(({theme}) => ({
+const FlexDivItem = styled('div')(() => ({
     flex: "1 1 50%",
     marginLeft: 5,
     marginRight: 5
@@ -56,9 +57,11 @@ const GetDebtorPage = () => {
     const [amountDebt, setAmountDebt] = useState(0);
     const [isOpenEditDialog, setIsOpenEditDialog] = useState(false);
     const [isOpenDeleteDialog, setIsOpenDeleteDialog] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         setDebtor(debtorsInMemory.find(debtor => debtor.id === parseInt(debtorId)));
+        setLoading(false);
     }, [])
 
     useEffect(() => {
@@ -83,22 +86,37 @@ const GetDebtorPage = () => {
                         <Grid item xs={6}>
                             <ListItem>
                                 <ListItemAvatar>
-                                    <Avatar>
-                                        <Abc/>
-                                    </Avatar>
+                                    {
+                                        loading
+                                            ? <Skeleton variant="circular">
+                                                <Avatar/>
+                                            </Skeleton>
+                                            : <Avatar>
+                                                <Abc/>
+                                            </Avatar>
+                                    }
                                 </ListItemAvatar>
-                                <ListItemText primary="Imię i nazwisko"
-                                              secondary={debtor.firstName + " " + debtor.lastName}></ListItemText>
+                                <ListItemText primary={loading ? <Skeleton width="20%"/> : "Imię i nazwisko"}
+                                              secondary={loading ? <Skeleton
+                                                  width="10%"/> : debtor.firstName + " " + debtor.lastName}></ListItemText>
                             </ListItem>
                         </Grid>
                         <Grid item xs={6}>
                             <ListItem>
                                 <ListItemAvatar>
-                                    <Avatar>
-                                        <Equalizer/>
-                                    </Avatar>
+                                    {
+                                        loading
+                                            ? <Skeleton variant="circular">
+                                                <Avatar/>
+                                            </Skeleton>
+                                            : <Avatar>
+                                                <Equalizer/>
+                                            </Avatar>
+                                    }
                                 </ListItemAvatar>
-                                <ListItemText primary="Data utworzenia" secondary={debtor.createdAt}></ListItemText>
+                                <ListItemText primary={loading ? <Skeleton width="20%"/> : "Data utworzenia"}
+                                              secondary={loading ?
+                                                  <Skeleton width="10%"/> : debtor.createdAt}></ListItemText>
                             </ListItem>
                         </Grid>
                     </Grid>
@@ -115,50 +133,83 @@ const GetDebtorPage = () => {
                         <Divider/>
                         <ListItem>
                             <ListItemAvatar>
-                                <Avatar sx={{bgcolor: amountDebt > 0 && theme.palette.primary.main}}>
-                                    <AttachMoney/>
-                                </Avatar>
+                                {
+                                    loading
+                                        ? <Skeleton variant="circular">
+                                            <Avatar/>
+                                        </Skeleton>
+                                        : <Avatar sx={{bgcolor: amountDebt > 0 && theme.palette.primary.main}}>
+                                            <AttachMoney/>
+                                        </Avatar>
+                                }
+
                             </ListItemAvatar>
-                            <ListItemText primary="Kwota zadłużenia" secondary={amountDebt + "zł"}></ListItemText>
+                            <ListItemText primary={loading ? <Skeleton width="20%"/> : "Kwota zadłużenia"}
+                                          secondary={loading ?
+                                              <Skeleton width="10%"/> : amountDebt + "zł"}></ListItemText>
                         </ListItem>
 
                         <Divider/>
                         <ListItem>
                             <ListItemAvatar>
-                                <Avatar>
-                                    <AccessTime/>
-                                </Avatar>
+                                {
+                                    loading
+                                        ? <Skeleton variant="circular">
+                                            <Avatar/>
+                                        </Skeleton>
+                                        : <Avatar>
+                                            <AccessTime/>
+                                        </Avatar>
+                                }
+
                             </ListItemAvatar>
-                            <ListItemText primary="Ostatnio dodane zadłużenie"
-                                          secondary={getLastDebtDate(debts)}></ListItemText>
+                            <ListItemText primary={loading ? <Skeleton width="20%"/> : "Ostatnio dodane zadłużenie"}
+                                          secondary={loading ?
+                                              <Skeleton width="10%"/> : getLastDebtDate(debts)}></ListItemText>
                         </ListItem>
 
                         <Divider/>
                         <ListItem>
                             <ListItemAvatar>
-                                <Avatar sx={{bgcolor: getUnPaidDebtsCount(debts) > 0 && theme.palette.primary.main}}>
-                                    <Equalizer/>
-                                </Avatar>
+                                {
+                                    loading
+                                        ? <Skeleton variant="circular">
+                                            <Avatar/>
+                                        </Skeleton>
+                                        : <Avatar
+                                            sx={{bgcolor: getUnPaidDebtsCount(debts) > 0 && theme.palette.primary.main}}>
+                                            <Equalizer/>
+                                        </Avatar>
+                                }
                             </ListItemAvatar>
-                            <ListItemText primary="Ilość nieopłaconych zadłużeń"
-                                          secondary={getUnPaidDebtsCount(debts)}></ListItemText>
+                            <ListItemText primary={loading ? <Skeleton width="20%"/> : "Ilość nieopłaconych zadłużeń"}
+                                          secondary={loading ?
+                                              <Skeleton width="10%"/> : getUnPaidDebtsCount(debts)}></ListItemText>
                         </ListItem>
 
                         <Divider/>
                         <ListItem>
                             <ListItemAvatar>
-                                <Avatar sx={{bgcolor: getPaidDebtsCount(debts) > 0 && theme.palette.success.main}}>
-                                    <Equalizer/>
-                                </Avatar>
+                                {
+                                    loading
+                                        ? <Skeleton variant="circular">
+                                            <Avatar/>
+                                        </Skeleton>
+                                        : <Avatar
+                                            sx={{bgcolor: getPaidDebtsCount(debts) > 0 && theme.palette.success.main}}>
+                                            <Equalizer/>
+                                        </Avatar>
+                                }
                             </ListItemAvatar>
-                            <ListItemText primary="Ilość opłaconych zadłużeń"
-                                          secondary={getPaidDebtsCount(debts)}></ListItemText>
+                            <ListItemText primary={loading ? <Skeleton width="20%"/> : "Ilość opłaconych zadłużeń"}
+                                          secondary={loading ?
+                                              <Skeleton width="10%"/> : getPaidDebtsCount(debts)}></ListItemText>
                         </ListItem>
                     </List>
                 </FlexDivItem>
 
                 <FlexDivItem>
-                    <DebtsList debtsList={debts} setDebtsList={setDebts}/>
+                    <DebtsList debtsList={debts} setDebtsList={setDebts} loading={loading}/>
                 </FlexDivItem>
             </FlexDiv>
 
