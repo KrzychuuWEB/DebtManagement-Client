@@ -1,11 +1,11 @@
 import React from "react";
-import DefaultTemplate from "./components/template/defaultTemplate";
+import DefaultTemplate from "./views/defaultTemplate";
 import {Route, Routes} from "react-router-dom";
 import HomePage from "./views/home";
 import GetDebtorPage from "./views/debtor/get";
 import GetDebtPage from "./views/debt/get";
 import {getRoute} from "./utils/routes";
-import NotFoundPage from "./views/notFoundPage/NotFoundPage";
+import NotFoundPage from "./views/notFound/NotFoundPage";
 import CreateDebtPage from "./views/debt/create";
 import CreateDebtorPage from "./views/debtor/create";
 import ResponseInterceptor from "./api/axios/interceptor/response";

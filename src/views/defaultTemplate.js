@@ -1,8 +1,8 @@
 import React from 'react';
-import { styled } from '@mui/material/styles';
-import AppMenu from '../menu';
+import {styled} from '@mui/material/styles';
+import AppMenu from './menu';
 
-const Main = styled('main')(({ theme }) => ({
+const Main = styled('main')(({theme}) => ({
     display: 'block',
     marginLeft: 'auto',
     marginRight: 'auto',
@@ -25,21 +25,21 @@ const Main = styled('main')(({ theme }) => ({
     },
 }));
 
-const DefaultTemplate = ({children, disabledMargin}) => {
-  return (
-    <div>
-        <header>
-            <AppMenu />
-        </header>
+const DefaultTemplate = ({children}) => {
+    return (
+        <div>
+            <header>
+                <AppMenu/>
+            </header>
 
-        <Main>
-            <div style={{
-                paddingTop: "90px",
-            }} />
-            { children }
-        </Main>
-    </div>
-  );
+            <Main>
+                <div style={{
+                    paddingTop: "90px",
+                }}/>
+                {children}
+            </Main>
+        </div>
+    );
 }
 
 export default DefaultTemplate;
