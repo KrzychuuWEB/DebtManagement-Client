@@ -1,10 +1,16 @@
-import React from "react";
+import React, {useContext} from "react";
 import DeleteDialog from "../../../../components/dialogs/deleteDialog";
+import {NotificationContext} from "../../../../notifications/context";
+import {useNavigate} from "react-router-dom";
+import {getRoute} from "../../../../utils/routes";
 
 const DeleteDebtDialog = ({isOpenDeleteDialog, handleToggleDeleteDialog}) => {
+    const {showNotification} = useContext(NotificationContext);
+    const navigate = useNavigate();
 
     const deleteDebt = () => {
-        console.log("delete");
+        navigate(getRoute.home);
+        showNotification("success", "Pomyślnie usunięto dług!");
     }
 
     return (

@@ -1,10 +1,12 @@
-import React from "react";
+import React, {useContext} from "react";
 import {Button, Dialog, DialogActions, DialogContent, DialogTitle} from "@mui/material";
 import {useFormik} from "formik";
 import {createDebtValidationSchema} from "../../forms/valid";
 import DebtForm from "../../forms";
+import {NotificationContext} from "../../../../notifications/context";
 
 const EditDebtDialog = ({isOpenEditDialog, debt, setDebt, handleToggleEditDialog}) => {
+    const {showNotification} = useContext(NotificationContext);
     const formik = useFormik({
         enableReinitialize: true,
         initialValues: {
@@ -20,6 +22,7 @@ const EditDebtDialog = ({isOpenEditDialog, debt, setDebt, handleToggleEditDialog
             }));
 
             handleToggleEditDialog(false);
+            showNotification("success", "Pomyślnie edytowano dług!");
         }
     })
 

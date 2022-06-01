@@ -1,10 +1,12 @@
-import React from "react";
+import React, {useContext} from "react";
 import {Button, Dialog, DialogActions, DialogContent, DialogTitle} from "@mui/material";
 import {useFormik} from "formik";
 import {createDebtorValidationSchema} from "../../forms/valid";
 import DebtorForm from "../../forms";
+import {NotificationContext} from "../../../../notifications/context";
 
 const EditDebtorDialog = ({debtor, setDebtor, isOpenEditDialog, handleEditDialogIsOpen}) => {
+    const {showNotification} = useContext(NotificationContext);
     const formik = useFormik({
         enableReinitialize: true,
         initialValues: {
@@ -19,6 +21,7 @@ const EditDebtorDialog = ({debtor, setDebtor, isOpenEditDialog, handleEditDialog
             }));
 
             handleEditDialogIsOpen(false);
+            showNotification("success", "Pomyślnie edytowano dłużnika!");
         }
     });
 

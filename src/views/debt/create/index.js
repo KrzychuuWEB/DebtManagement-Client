@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {Button} from "@mui/material";
 import BoxWithIconCenter from "../../../components/boxWithIconCenter";
 import {AttachMoney} from "@mui/icons-material";
@@ -7,8 +7,10 @@ import {debtorsInMemory} from "../../../inMemoryDatabase";
 import {createDebtValidationSchema} from "../forms/valid";
 import DebtForm from "../forms";
 import {useParams} from "react-router-dom";
+import {NotificationContext} from "../../../notifications/context";
 
 const CreateDebtPage = () => {
+    const {showNotification} = useContext(NotificationContext);
     const {debtorId} = useParams();
     const [debtors, setDebtors] = useState(debtorsInMemory);
     const formik = useFormik({
@@ -21,7 +23,8 @@ const CreateDebtPage = () => {
         },
         validationSchema: createDebtValidationSchema,
         onSubmit: (values) => {
-            console.log(values)
+            console.log(values);
+            showNotification("success", "Dodano nowy dług!");
         }
     })
 
