@@ -7,6 +7,7 @@ import {
     ListItem,
     ListItemAvatar,
     ListItemText,
+    Skeleton,
     SpeedDial,
     SpeedDialAction
 } from "@mui/material";
@@ -22,14 +23,15 @@ import {
     Person
 } from "@mui/icons-material";
 import {styled} from "@mui/material/styles";
-import {Link, useParams} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import {getRoute} from "../../../utils/routes";
 import BoxWithIconCenter from "../../../components/boxWithIconCenter";
-import {debtsInMemory} from "../../../inMemoryDatabase";
 import EditDebtDialog from "./edit";
 import DeleteDebtDialog from "./delete";
+import {getDebtById} from "../../../api/service/debtService";
+import {formatDate} from "../../../utils/formatDate";
 
-const FlexDiv = styled('div')(({theme}) => ({
+const FlexDiv = styled('div')(() => ({
     display: "flex",
     justifyContent: "space-around",
     alignItems: "flex-start",
@@ -37,9 +39,11 @@ const FlexDiv = styled('div')(({theme}) => ({
 
 const GetDebtPage = () => {
     const [debt, setDebt] = useState({debtor: {}});
+    const navigate = useNavigate();
     let {debtId} = useParams();
     const [isOpenEditDialog, setIsOpenEditDialog] = useState(false);
     const [isOpenDeleteDialog, setIsOpenDeleteDialog] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     const handleToggleEditDialog = state => {
         setIsOpenEditDialog(state);
@@ -49,8 +53,19 @@ const GetDebtPage = () => {
         setIsOpenDeleteDialog(state);
     }
 
+    async function getDebt() {
+        return await getDebtById(debtId);
+    }
+
     useEffect(() => {
-        setDebt(debtsInMemory.find(debt => debt.id === parseInt(debtId)));
+        getDebt().then(response => {
+            setDebt(response.data)
+        }).catch(() => {
+            navigate("/debtNotFound");
+        })
+            .finally(() => {
+                setLoading(false);
+            })
     }, [debtId]);
 
     return (
@@ -61,30 +76,50 @@ const GetDebtPage = () => {
                         <List>
                             <ListItem>
                                 <ListItemAvatar>
-                                    <Avatar>
-                                        <Abc/>
-                                    </Avatar>
+                                    {
+                                        loading
+                                            ? <Skeleton variant="circular">
+                                                <Avatar/>
+                                            </Skeleton>
+                                            : <Avatar>
+                                                <Abc/>
+                                            </Avatar>
+                                    }
                                 </ListItemAvatar>
-                                <ListItemText primary="Nazwa długu" secondary={debt.name}/>
+                                <ListItemText primary={loading ? <Skeleton width="20%"/> : "Nazwa długu"}
+                                              secondary={loading ? <Skeleton width="10%"/> : debt.name}/>
                             </ListItem>
                             <Divider/>
                             <ListItem>
                                 <ListItemAvatar>
-                                    <Avatar>
-                                        <Description/>
-                                    </Avatar>
+                                    {
+                                        loading
+                                            ? <Skeleton variant="circular">
+                                                <Avatar/>
+                                            </Skeleton>
+                                            : <Avatar>
+                                                <Description/>
+                                            </Avatar>
+                                    }
                                 </ListItemAvatar>
-                                <ListItemText primary="Opis długu"
-                                              secondary={debt.description}/>
+                                <ListItemText primary={loading ? <Skeleton width="20%"/> : "Opis długu"}
+                                              secondary={loading ? <Skeleton width="10%"/> : debt.description}/>
                             </ListItem>
                             <Divider/>
                             <ListItem>
                                 <ListItemAvatar>
-                                    <Avatar>
-                                        <AttachMoney/>
-                                    </Avatar>
+                                    {
+                                        loading
+                                            ? <Skeleton variant="circular">
+                                                <Avatar/>
+                                            </Skeleton>
+                                            : <Avatar>
+                                                <AttachMoney/>
+                                            </Avatar>
+                                    }
                                 </ListItemAvatar>
-                                <ListItemText primary="Kwota długu" secondary={debt.price + "zł"}/>
+                                <ListItemText primary={loading ? <Skeleton width="20%"/> : "Kwota długu"}
+                                              secondary={loading ? <Skeleton width="10%"/> : debt.price + "zł"}/>
                             </ListItem>
                         </List>
                     </div>
@@ -93,33 +128,61 @@ const GetDebtPage = () => {
                         <List>
                             <ListItem>
                                 <ListItemAvatar>
-                                    <Avatar>
-                                        <Equalizer/>
-                                    </Avatar>
+                                    {
+                                        loading
+                                            ? <Skeleton variant="circular">
+                                                <Avatar/>
+                                            </Skeleton>
+                                            : <Avatar>
+                                                <Equalizer/>
+                                            </Avatar>
+                                    }
                                 </ListItemAvatar>
-                                <ListItemText primary="Data zaciągnięcia długu" secondary={debt.addDate}/>
+                                <ListItemText primary={loading ? <Skeleton width="20%"/> : "Data zaciągnięcia długu"}
+                                              secondary={loading ?
+                                                  <Skeleton width="10%"/> : formatDate(debt.createdAt)}/>
                             </ListItem>
                             <Divider/>
                             <ListItem>
                                 <ListItemAvatar>
-                                    <Avatar>
-                                        <Equalizer/>
-                                    </Avatar>
+                                    {
+                                        loading
+                                            ? <Skeleton variant="circular">
+                                                <Avatar/>
+                                            </Skeleton>
+                                            : <Avatar>
+                                                <Equalizer/>
+                                            </Avatar>
+                                    }
                                 </ListItemAvatar>
-                                <ListItemText primary="Data ostatniej aktualizacji długu" secondary={debt.editDate}/>
+                                <ListItemText
+                                    primary={loading ? <Skeleton width="20%"/> : "Data ostatniej aktualizacji długu"}
+                                    secondary={loading ? <Skeleton width="10%"/> : formatDate(debt.createdAt)}/>
                             </ListItem>
                             <Divider/>
                             <ListItem>
                                 <ListItemAvatar>
-                                    <Avatar>
-                                        <Person/>
-                                    </Avatar>
+                                    {
+                                        loading
+                                            ? <Skeleton variant="circular">
+                                                <Avatar/>
+                                            </Skeleton>
+                                            : <Avatar>
+                                                <Person/>
+                                            </Avatar>
+                                    }
                                 </ListItemAvatar>
-                                <ListItemText primary="Dłużnik"
-                                              secondary={debt.debtor.firstName + " " + debt.debtor.lastName}/>
-                                <IconButton edge="end" component={Link} to={getRoute.debtor.getWithId(debt.debtor.id)}>
-                                    <Info/>
-                                </IconButton>
+                                <ListItemText primary={loading ? <Skeleton width="20%"/> : "Dłużnik"}
+                                              secondary={loading ? <Skeleton
+                                                  width="10%"/> : debt.debtor.firstName + " " + debt.debtor.lastName}/>
+                                {
+                                    loading
+                                        ? <Skeleton variant="circular"><IconButton/></Skeleton>
+                                        : <IconButton edge="end" component={Link}
+                                                      to={getRoute.debtor.getWithId(debt.debtor.id)}>
+                                            <Info/>
+                                        </IconButton>
+                                }
                             </ListItem>
                         </List>
                     </div>
@@ -156,6 +219,7 @@ const GetDebtPage = () => {
             <DeleteDebtDialog
                 handleToggleDeleteDialog={handleToggleDeleteDialog}
                 isOpenDeleteDialog={isOpenDeleteDialog}
+                debtId={debt.id}
             />
         </div>
     );
