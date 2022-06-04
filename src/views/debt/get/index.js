@@ -23,12 +23,13 @@ import {
     Person
 } from "@mui/icons-material";
 import {styled} from "@mui/material/styles";
-import {Link, useParams} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import {getRoute} from "../../../utils/routes";
 import BoxWithIconCenter from "../../../components/boxWithIconCenter";
-import {debtsInMemory} from "../../../inMemoryDatabase";
 import EditDebtDialog from "./edit";
 import DeleteDebtDialog from "./delete";
+import {getDebtById} from "../../../api/service/debtService";
+import {formatDate} from "../../../utils/formatDate";
 
 const FlexDiv = styled('div')(() => ({
     display: "flex",
@@ -38,6 +39,7 @@ const FlexDiv = styled('div')(() => ({
 
 const GetDebtPage = () => {
     const [debt, setDebt] = useState({debtor: {}});
+    const navigate = useNavigate();
     let {debtId} = useParams();
     const [isOpenEditDialog, setIsOpenEditDialog] = useState(false);
     const [isOpenDeleteDialog, setIsOpenDeleteDialog] = useState(false);
@@ -51,9 +53,19 @@ const GetDebtPage = () => {
         setIsOpenDeleteDialog(state);
     }
 
+    async function getDebt() {
+        return await getDebtById(debtId);
+    }
+
     useEffect(() => {
-        setDebt(debtsInMemory.find(debt => debt.id === parseInt(debtId)));
-        setLoading(false);
+        getDebt().then(response => {
+            setDebt(response.data)
+        }).catch(() => {
+            navigate("/debtNotFound");
+        })
+            .finally(() => {
+                setLoading(false);
+            })
     }, [debtId]);
 
     return (
@@ -127,7 +139,8 @@ const GetDebtPage = () => {
                                     }
                                 </ListItemAvatar>
                                 <ListItemText primary={loading ? <Skeleton width="20%"/> : "Data zaciągnięcia długu"}
-                                              secondary={loading ? <Skeleton width="10%"/> : debt.addDate}/>
+                                              secondary={loading ?
+                                                  <Skeleton width="10%"/> : formatDate(debt.createdAt)}/>
                             </ListItem>
                             <Divider/>
                             <ListItem>
@@ -144,7 +157,7 @@ const GetDebtPage = () => {
                                 </ListItemAvatar>
                                 <ListItemText
                                     primary={loading ? <Skeleton width="20%"/> : "Data ostatniej aktualizacji długu"}
-                                    secondary={loading ? <Skeleton width="10%"/> : debt.editDate}/>
+                                    secondary={loading ? <Skeleton width="10%"/> : formatDate(debt.createdAt)}/>
                             </ListItem>
                             <Divider/>
                             <ListItem>
@@ -206,6 +219,7 @@ const GetDebtPage = () => {
             <DeleteDebtDialog
                 handleToggleDeleteDialog={handleToggleDeleteDialog}
                 isOpenDeleteDialog={isOpenDeleteDialog}
+                debtId={debt.id}
             />
         </div>
     );

@@ -22,13 +22,16 @@ const ResponseInterceptor = ({children}) => {
         return response;
     }, error => {
         if (error.code === "ERR_NETWORK") {
-            setStatus(500);
+            setStatus(404);
         } else {
             switch (error.response.code) {
                 case 404:
                     setStatus(404);
                     break;
-                default: setStatus(500);
+                case 500:
+                    setStatus(500);
+                    break;
+                default: setStatus(null);
             }
         }
 
@@ -41,6 +44,7 @@ const ResponseInterceptor = ({children}) => {
                 status != null
                     ? exceptions.map(exception => (
                         status === exception.code && <ExceptionTemplate
+                            key={exception.code}
                             title={exception.title}
                             description={exception.description}
                             code={exception.code}

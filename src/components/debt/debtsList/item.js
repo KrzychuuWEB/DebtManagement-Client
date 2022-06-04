@@ -37,7 +37,7 @@ const DebtItemList = ({debt, changeDevoted, loading}) => {
                 loading
                     ? <Skeleton variant="circular" sx={{marginLeft: 1}}><IconButton/></Skeleton>
                     : <Tooltip title={debt.isDevoted ? "Zaciągnij dług" : "Spłac dług"} placement="top">
-                        <IconButton onClick={() => changeDevoted(debt.id)}>
+                        <IconButton onClick={() => changeDevoted(debt.id, debt.isDevoted)}>
                             <PriceCheck color={debt.isDevoted ? "primary" : "success"}/>
                         </IconButton>
                     </Tooltip>

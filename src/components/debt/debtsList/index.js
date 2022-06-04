@@ -2,11 +2,14 @@ import React from "react";
 import {Divider, List, ListSubheader} from "@mui/material";
 import DebtItemList from "./item";
 import InfoAlert from "../../alerts/info";
+import {changeDebtDevotedById} from "../../../api/service/debtService";
 
 const DebtsList = ({debtsList, setDebtsList, withoutSubHeader, loading}) => {
 
-    const changeDevoted = (id) => {
-        setDebtsList(debtsList.map(debt => debt.id === id ? {...debt, isDevoted: !debt.isDevoted} : debt));
+    const changeDevoted = (id, devoted) => {
+        changeDebtDevotedById(id, {id: id, devoted: !devoted}).then(r => {
+            setDebtsList(debtsList.map(debt => debt.id === id ? {...debt, isDevoted: !debt.isDevoted} : debt));
+        });
     }
 
     return (
@@ -23,7 +26,7 @@ const DebtsList = ({debtsList, setDebtsList, withoutSubHeader, loading}) => {
 
                 {
                     debtsList.length > 0 ? debtsList.map((debt, index) => (
-                            <div>
+                            !debt.isDevoted && <div key={debt.id}>
                                 {index > 0 && <Divider/>}
                                 <DebtItemList loading={loading} key={debt.id} debt={debt} changeDevoted={changeDevoted}/>
                             </div>

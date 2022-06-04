@@ -30,11 +30,14 @@ import {useEffect, useState} from 'react';
 import DebtsList from "../../../components/debt/debtsList";
 import {getRoute} from "../../../utils/routes";
 import BoxWithIconCenter from "../../../components/boxWithIconCenter";
-import {debtorsInMemory, debtsInMemory} from "../../../inMemoryDatabase";
-import {Link, useParams} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import EditDebtorDialog from "./edit";
 import DeleteDebtorDialog from "./delete";
 import {getAmountOfDebt, getLastDebtDate, getPaidDebtsCount, getUnPaidDebtsCount} from "./utils";
+import {getDebtorById} from "../../../api/service/debtorService";
+import {formatDate} from "../../../utils/formatDate";
+import axios from "axios";
+import {getAllDebtsByDebtorId} from "../../../api/service/debtService";
 
 const FlexDiv = styled('div')(() => ({
     display: "flex",
@@ -51,8 +54,9 @@ const FlexDivItem = styled('div')(() => ({
 
 const GetDebtorPage = () => {
     const theme = useTheme();
+    const navigate = useNavigate();
     let {debtorId} = useParams();
-    const [debts, setDebts] = useState(debtsInMemory);
+    const [debts, setDebts] = useState([{debtor: {}}]);
     const [debtor, setDebtor] = useState({});
     const [amountDebt, setAmountDebt] = useState(0);
     const [isOpenEditDialog, setIsOpenEditDialog] = useState(false);
@@ -60,8 +64,15 @@ const GetDebtorPage = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        setDebtor(debtorsInMemory.find(debtor => debtor.id === parseInt(debtorId)));
-        setLoading(false);
+        axios.all([getDebtorById(debtorId), getAllDebtsByDebtorId(debtorId)]).then(axios.spread((...responses) => {
+            setDebtor(responses[0].data);
+            setDebts(responses[1].data);
+        })).catch(error => {
+            navigate("/debtorNotFound");
+        })
+            .finally(() => {
+            setLoading(false);
+        });
     }, [])
 
     useEffect(() => {
@@ -116,7 +127,8 @@ const GetDebtorPage = () => {
                                 </ListItemAvatar>
                                 <ListItemText primary={loading ? <Skeleton width="20%"/> : "Data utworzenia"}
                                               secondary={loading ?
-                                                  <Skeleton width="10%"/> : debtor.createdAt}></ListItemText>
+                                                  <Skeleton
+                                                      width="10%"/> : formatDate(debtor.createdAt)}></ListItemText>
                             </ListItem>
                         </Grid>
                     </Grid>
@@ -165,7 +177,7 @@ const GetDebtorPage = () => {
                             </ListItemAvatar>
                             <ListItemText primary={loading ? <Skeleton width="20%"/> : "Ostatnio dodane zadłużenie"}
                                           secondary={loading ?
-                                              <Skeleton width="10%"/> : getLastDebtDate(debts)}></ListItemText>
+                                              <Skeleton width="10%"/> : (debts.length > 0 ? getLastDebtDate(debts) : "Brak długów")}></ListItemText>
                         </ListItem>
 
                         <Divider/>
@@ -249,6 +261,7 @@ const GetDebtorPage = () => {
             <DeleteDebtorDialog
                 handleDeleteDialogIsOpen={handleDeleteDialogIsOpen}
                 isOpenDeleteDialog={isOpenDeleteDialog}
+                debtorId={debtor.id}
             />
         </div>
     );

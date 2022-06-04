@@ -3,14 +3,21 @@ import DeleteDialog from "../../../../components/dialogs/deleteDialog";
 import {NotificationContext} from "../../../../notifications/context";
 import {useNavigate} from "react-router-dom";
 import {getRoute} from "../../../../utils/routes";
+import {deleteDebtorById} from "../../../../api/service/debtorService";
 
-const DeleteDebtorDialog = ({isOpenDeleteDialog, handleDeleteDialogIsOpen}) => {
+const DeleteDebtorDialog = ({isOpenDeleteDialog, handleDeleteDialogIsOpen, debtorId}) => {
     const {showNotification} = useContext(NotificationContext);
     const navigate = useNavigate();
 
+    async function deleteById(id) {
+        return await deleteDebtorById(id);
+    }
+
     const deleteDebtor = () => {
-        navigate(getRoute.home);
-        showNotification("success", "Pomyślnie usunięto dłużnika!");
+        deleteById(debtorId).then(() => {
+            navigate(getRoute.home);
+            showNotification("success", "Pomyślnie usunięto dłużnika!");
+        })
     }
 
     return (

@@ -1,3 +1,5 @@
+import {formatDate} from "../../../utils/formatDate";
+
 export const getUnPaidDebtsCount = (debts) => {
     return debts.filter(debt => !debt.isDevoted).length
 }
@@ -13,5 +15,5 @@ export const getPaidDebtsCount = (debts) => {
 }
 
 export const getLastDebtDate = (debts) => {
-    return debts.sort((a, b) => b.id - a.id)[0].addDate;
+    return formatDate(debts.sort((a, b) => b.id - a.id)[0].createdAt);
 }

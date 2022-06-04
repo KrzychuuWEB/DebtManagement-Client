@@ -3,33 +3,57 @@ import {Button} from "@mui/material";
 import BoxWithIconCenter from "../../../components/boxWithIconCenter";
 import {AttachMoney} from "@mui/icons-material";
 import {useFormik} from "formik";
-import {debtorsInMemory} from "../../../inMemoryDatabase";
 import {createDebtValidationSchema} from "../forms/valid";
 import DebtForm from "../forms";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {NotificationContext} from "../../../notifications/context";
+import {getDebtorById} from "../../../api/service/debtorService";
+import {createDebt} from "../../../api/service/debtService";
+import {getRoute} from "../../../utils/routes";
 
 const CreateDebtPage = () => {
+    const navigate = useNavigate();
     const {showNotification} = useContext(NotificationContext);
+    const [loading, setLoading] = useState(false);
     const {debtorId} = useParams();
-    const [debtors, setDebtors] = useState(debtorsInMemory);
+    const [debtors, setDebtors] = useState({});
+
+    async function postDebt(data) {
+        return await createDebt(data);
+    }
+
     const formik = useFormik({
         enableReinitialize: true,
         initialValues: {
             name: "",
             description: "",
-            price: "",
-            debtor: debtorId,
+            price: 0,
+            debtorId: debtorId,
         },
         validationSchema: createDebtValidationSchema,
-        onSubmit: (values) => {
-            console.log(values);
-            showNotification("success", "Dodano nowy dług!");
+        onSubmit: (values, actions) => {
+            setLoading(true);
+            postDebt(values).then(() => {
+                showNotification("success", "Dodano nowy dług!");
+                navigate(getRoute.debtor.getWithId(debtorId));
+            }).catch(error => {
+                actions.setErrors(error.response.data);
+            }).finally(() => {
+                setLoading(false);
+            })
         }
     })
 
+    async function get(id) {
+        return await getDebtorById(id);
+    }
+
     useEffect(() => {
-        setDebtors(debtorsInMemory.find(debtor => debtor.id === parseInt(debtorId)));
+        get(debtorId).then(response => {
+            setDebtors(response.data)
+        }).catch(() => {
+            navigate("/debtorNotFound");
+        })
     }, []);
 
     return (
@@ -40,7 +64,7 @@ const CreateDebtPage = () => {
         >
             <DebtForm
                 formik={formik}
-                actionButtons={<Button variant="contained" type="submit">
+                actionButtons={<Button disabled={loading} variant="contained" type="submit">
                     Dodaj
                 </Button>}
                 debtor={debtors}
