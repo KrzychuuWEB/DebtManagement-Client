@@ -4,6 +4,7 @@ Debt Managment API - [https://github.com/KrzychuuWEB/DebtManagement-API](https:/
 ## Table of contents
 * [Description](#description)
 * [Features](#features)
+* [Screens](#screens)
 
 ## Description
 This project helps for debt managment. 
@@ -18,7 +19,7 @@ I used to create this project:
 - Hibernate
 - Liquibase
 
-### Features:
+## Features:
 - View all debtors
 - View all unpaid debts
 - CRUD debtor
@@ -26,7 +27,7 @@ I used to create this project:
 - Debt repayment
 
 
-#### Screens
+## Screens
 ![alt main app template](https://github.com/KrzychuuWEB/DebtManagement-Client/blob/main/main%20app.png)
 ![alt show debts list](https://github.com/KrzychuuWEB/DebtManagement-Client/blob/main/main%20app.png)
 ![alt debtor](https://github.com/KrzychuuWEB/DebtManagement-Client/blob/main/debtor.png)
